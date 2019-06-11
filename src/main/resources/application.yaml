@@ -1,0 +1,32 @@
+# DataSource Config
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mybatis-plus?serverTimezone=GMT%2B8
+    username: root
+    password: root
+    hikari:
+      connection-timeout: 30000
+      auto-commit: true
+      max-lifetime: 1800000
+      pool-name: DatebookHikariCP
+      minimum-idle: 5
+      connection-test-query: SELECT 1
+      idle-timeout: 30000
+      maximum-pool-size: 50
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.entity
+logging:
+  level:
+    com:
+      dao: debug
+
+#默认请求参数
+test: lin
+markdown:
+  path: F:\GitBook\Markdown入门到放弃\1.node.js介绍\README.md
+  bak-path: F:\GitBook\Markdown入门到放弃\bak
