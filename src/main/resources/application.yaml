@@ -28,5 +28,5 @@ logging:
 #默认请求参数
 test: lin
 markdown:
-  path: F:\GitBook\Markdown入门到放弃\1.node.js介绍\README.md
+  path: F:\GitBook\Markdown入门到放弃
   bak-path: F:\GitBook\Markdown入门到放弃\bak
