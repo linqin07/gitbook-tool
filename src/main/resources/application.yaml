@@ -28,5 +28,11 @@ logging:
 #默认请求参数
 test: lin
 markdown:
-  path: F:\GitBook\Markdown入门到放弃
-  bak-path: F:\GitBook\Markdown入门到放弃\bak
+  #  path: F:\GitBook\Markdown入门到放弃
+  #  bak-path: F:\GitBook\Markdown入门到放弃\bak
+
+  #  path: F:\GitBook\Linux
+  #  bak-path: F:\GitBook\Linux\picBak
+
+  path:   F:\GitBook\Java学习
+  bak-path:   F:\GitBook\Java学习\picBak

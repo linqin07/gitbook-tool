@@ -37,7 +37,7 @@ public class BaseServiceImpl implements BaseService {
     /**
      * 匹配： ![下载地址](https://i.lsd83c93567.jpg)
      */
-    final static String regex1 = "^!\\[.+\\]\\(http.+\\)$";
+    final static String regex1 = "^!\\[.*\\]\\(http.+\\)$";
     /**
      * 正则 ![下载地址](assets/1550052930676.png)
      */
@@ -48,9 +48,10 @@ public class BaseServiceImpl implements BaseService {
     final static String regex3 = "^!\\[.+\\]\\(assets\\/.+\\.(png|gif)\\)$";
 
     /**
+     * 匹配 windos 本地地址图片
      * ![下载地址](F:\GitBook\Markdown入门到放弃\bak\1550052930676.png)
      */
-    final static String regex4 = "^!\\[.+\\]\\([^http|^assets].+\\)$";
+    final static String regex4 = "^!\\[.*\\]\\([^http|^assets].+\\)$";
 
     private final static Pattern PATTERN1;
     private final static Pattern PATTERN2;

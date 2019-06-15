@@ -1,18 +1,14 @@
 package com.util;
 
 import com.google.common.collect.Lists;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.Cleanup;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Description:
@@ -56,10 +52,12 @@ public class FileUtil {
         @Cleanup InputStream is = new FileInputStream(file.getPath());
         @Cleanup InputStreamReader isr = new InputStreamReader(is, Charset.forName("utf-8"));
         @Cleanup BufferedReader br = new BufferedReader(isr, 1024);
+
         String data;
         while ((data = br.readLine()) != null) {
             list.add(data);
         }
+
 
         return list;
     }
@@ -78,5 +76,10 @@ public class FileUtil {
             }
         });
         return list;
+    }
+
+    public static void main(String[] args) throws IOException {
+        List<String> content = readFileContent(new File("F:\\GitBook\\Linux\\防火墙\\防火墙.md"));
+        System.out.println(content.toString());
     }
 }
