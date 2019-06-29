@@ -76,12 +76,115 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+        <!-- yaml 支持分离配置打包-->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+
+        <!-- json工具 -->
+        <dependency>
+            <groupId>com.github.javadev</groupId>
+            <artifactId>underscore</artifactId>
+            <version>1.45</version>
+        </dependency>
+
     </dependencies>
+
+
     <build>
+        <!-- 指定打包的名字 -->
+        <finalName>${project.artifactId}</finalName>
+        <!--Maven会从项目的src/main/resources目录下查找资源，加载配置，不能随便改，-->
+        <resources>
+            <!--把配置文件放在jar包外面的config文件夹，方便修改-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 当前项目下target目录新建一个项目名文件夹里面config文件夹 ${project.artifactId} -->
+                <!--<targetPath>${project.basedir}/target/${project.artifactId}/config</targetPath>-->
+
+                <includes>
+                    <include>application.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
+            <!--打包操作-->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <!--<version>${maven.jar.plugin.version}</version>-->
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!--表示需要加入到类构建路径-->
+                            <addClasspath>true</addClasspath>
+                            <!--classpathPrefix指定生成的Manifest文件中Class-Path依赖lib前面都加上路径,构建出lib/xx.jar-->
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.GitbookApplication</mainClass>
+                        </manifest>
+                    </archive>
+                    <!--打包排除-->
+                    <excludes>
+                        <exclude>application.yml</exclude>
+                    </excludes>
+                    <outputDirectory>
+                        ${project.build.directory}/${project.artifactId}
+                    </outputDirectory>
+
+                </configuration>
+            </plugin>
+
+            <!--拷贝依赖到jar外面的lib目录-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <!--<version>${maven.dependency.plugin.version}</version>-->
+                <executions>
+                    <execution>
+                        <id>copy-lib</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.artifactId}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <includeScope>compile</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 复制配置文件 -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- 触发条件 -->
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/target/${project.artifactId}/config</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>application.yml</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
