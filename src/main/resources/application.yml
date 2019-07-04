@@ -28,8 +28,11 @@ logging:
 #默认请求参数
 test: lin
 markdown:
-  path: F:\GitBook\Markdown入门到放弃
-  bak-path: F:\GitBook\Markdown入门到放弃\bak
+  path: F:\hexo\vuepress\docs
+  bak-path: F:\hexo\vuepress\docs\.vuepress\picBak
+
+#  path: F:\GitBook\Markdown入门到放弃
+#  bak-path: F:\GitBook\Markdown入门到放弃\bak
 
   #  path: F:\GitBook\Linux
   #  bak-path: F:\GitBook\Linux\picBak
