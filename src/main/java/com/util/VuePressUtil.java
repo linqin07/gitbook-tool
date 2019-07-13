@@ -6,6 +6,7 @@ import com.github.underscore.lodash.U;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
  * @author: LinQin
  * @date: 2019/06/26
  */
+@Slf4j
 public class VuePressUtil {
     public static final String SEPARATOR = "/";
     public static final String README_MD = "README.md";
@@ -35,6 +37,7 @@ public class VuePressUtil {
         String path = "F:\\hexo\\vuepress\\docs";
         if (args.length > 0 && !StringUtils.hasText(args[0])) {
             path = args[0];
+            log.info("目标:{}",path);
         }
         System.setProperty("root", path);
         File file = new File(path);
@@ -58,7 +61,8 @@ public class VuePressUtil {
         String vueConfig = "module.exports = " + formatJson;
         // System.out.println(formatJson);
         ByteArrayInputStream bis = new ByteArrayInputStream(vueConfig.getBytes(Charsets.UTF_8));
-        File output = new File(path + File.separator + "sidebarConf.js");
+        File output = new File(file.getParent() + File.separator  + "config/sidebarConf.js");
+        log.info("生成目标文件目录:{}", output.getPath());
         Files.copy(bis, output.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
     }
