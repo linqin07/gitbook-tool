@@ -9,13 +9,17 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
+import javax.swing.table.TableRowSorter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.Collator;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -104,7 +108,22 @@ public class VuePressUtil {
             }
         }
 
-        return list;
+        // 排序
+        List collect = (List) list.stream().sorted((a, b) -> {
+            if (a instanceof String[] && b instanceof String[]) {
+                String[] astr = (String[]) a;
+                String[] bstr = (String[]) b;
+                String[] split1 = astr[1].split("\\.");
+                String[] split2 = bstr[1].split("\\.");
+                if (split1.length == 2 && split2.length == 2) {
+                    String s = split1[0];
+                    String anotherString = split2[0];
+                    return Integer.valueOf(s).compareTo(Integer.valueOf(anotherString));
+                }
+                return 1;
+            } else return 1;
+        }).collect(Collectors.toList());
+        return collect;
     }
 
 }

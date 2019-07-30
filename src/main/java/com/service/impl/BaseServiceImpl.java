@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
 public class BaseServiceImpl implements BaseService {
 
     /**
-     * 匹配： ![下载地址](https://i.lsd83c93567.jpg)
+     * 匹配： ![下载地址](https://i.loli.net/2019/07/30/5d400294d103e20393.jpg)
      */
-    final static String regex1 = "\\s*!\\[.*\\]\\(http.*\\)$";
+    final static String regex1 = "\\s*!\\[.*\\]\\(https://i\\.loli.*\\)$";
     /**
      * 正则 ![下载地址](assets/1550052930676.png)
      */
