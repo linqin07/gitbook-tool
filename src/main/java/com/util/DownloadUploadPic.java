@@ -37,9 +37,9 @@ public class DownloadUploadPic {
 
     static {
         httpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .build();
     }
@@ -111,7 +111,7 @@ public class DownloadUploadPic {
             } catch (Exception e) {
                 logger.error("上传图片[{}]失败 res=[{}]", path, body.string());
                 errorTime++;
-                TimeUnit.SECONDS.sleep(10000);
+                TimeUnit.SECONDS.sleep(1000);
                 return upload(path, errorTime);
             } finally {
                 body.close();
@@ -140,5 +140,9 @@ public class DownloadUploadPic {
         return true;
     }
 
+    public static void main(String[] args) throws IOException, InterruptedException {
+        String upload = upload("F:\\hexo\\vuepress\\docs\\Markdown入门到放弃\\vuepress搭建博客\\assets\\1562226911308.png", 1);
+        System.out.println(upload);
+    }
 }
 
