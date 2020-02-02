@@ -1,3 +1,5 @@
+server:
+  port: 8888
 # DataSource Config
 spring:
   datasource:
@@ -26,33 +28,9 @@ logging:
       dao: debug
 
 #默认请求参数
-test: lin
 markdown:
+#  笔记目录
   path: F:\hexo\vuepress\docs
+#  图片备份目录
   bak-path: F:\hexo\vuepress\docs\.vuepress\picBak
-
-#  path: F:\GitBook\Markdown入门到放弃
-#  bak-path: F:\GitBook\Markdown入门到放弃\bak
-
-  #  path: F:\GitBook\Linux
-  #  bak-path: F:\GitBook\Linux\picBak
-
-  #  path: F:\GitBook\Java学习
-  #  bak-path: F:\GitBook\Java学习\picBak
-
-  #  path: F:\GitBook\mysql
-  #  bak-path:  F:\GitBook\mysql\picBak
-
-  #  path: F:\GitBook\Spring
-  #  bak-path:  F:\GitBook\Spring\picBak
-
-  #  path: F:\GitBook\Spring-boot
-  #  bak-path:  F:\GitBook\Spring-boot\picBak
-
-
-  #  path:  F:\GitBook\复习题
-  #  bak-path:  F:\GitBook\复习题\picBak
-
-#  path: F:\GitBook\设计模式
-#  bak-path:  F:\GitBook\设计模式\picBak
 

@@ -21,9 +21,6 @@ public class TestController {
     @Autowired
     private BaseService baseService;
 
-    @Value("${test}")
-    private String test;
-
     @Value("${markdown.bak-path}")
     private String bakPath;
 
@@ -32,7 +29,6 @@ public class TestController {
 
     @RequestMapping("/test")
     public String test() {
-        System.out.println(test);
         System.out.println(bakPath);
         System.out.println(path);
         return "hello world!";

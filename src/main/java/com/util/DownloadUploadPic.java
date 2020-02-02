@@ -2,6 +2,7 @@ package com.util;
 
 import com.alibaba.fastjson.JSON;
 import com.entity.SMResponse;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
+
 import lombok.Cleanup;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -37,11 +39,11 @@ public class DownloadUploadPic {
 
     static {
         httpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .build();
+                                       .connectTimeout(60, TimeUnit.SECONDS)
+                                       .readTimeout(60, TimeUnit.SECONDS)
+                                       .writeTimeout(60, TimeUnit.SECONDS)
+                                       .retryOnConnectionFailure(true)
+                                       .build();
     }
 
     public static void download(String urlString, String fileName) throws IOException {
@@ -78,7 +80,7 @@ public class DownloadUploadPic {
 
 
     /**
-     * @param path 文件的绝对路径
+     * @param path      文件的绝对路径
      * @param errorTime 错误重试次数
      */
     public static String upload(String path, int errorTime)
@@ -111,7 +113,7 @@ public class DownloadUploadPic {
             } catch (Exception e) {
                 logger.error("上传图片[{}]失败 res=[{}]", path, body.string());
                 errorTime++;
-                TimeUnit.SECONDS.sleep(1000);
+                Thread.sleep(20 * 1000);
                 return upload(path, errorTime);
             } finally {
                 body.close();
