@@ -10,6 +10,7 @@ import com.util.DownloadUploadPic;
 import com.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -65,6 +66,9 @@ public class BaseServiceImpl implements BaseService {
         PATTERN3 = Pattern.compile(regex3, Pattern.MULTILINE);
         PATTERN4 = Pattern.compile(regex4, Pattern.MULTILINE);
     }
+
+    @Value("${token:null}")
+    private String token;
 
     @Autowired
     private InfoMapper infoMapper;
@@ -132,7 +136,7 @@ public class BaseServiceImpl implements BaseService {
                 String uploadPath;
                 try {
                     // 替换原来的图片路径
-                    uploadPath = DownloadUploadPic.upload(s, 0);
+                    uploadPath = DownloadUploadPic.upload(s, 3, token);
                     list.add(uploadPath);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -173,7 +177,7 @@ public class BaseServiceImpl implements BaseService {
                     // 上传本地备份图片，替换地址
                     if (Objects.nonNull(info.getPicLocalPath())) {
                         try {
-                            String uploadPath = DownloadUploadPic.upload(info.getPicLocalPath(), 0);
+                            String uploadPath = DownloadUploadPic.upload(info.getPicLocalPath(), 3, token);
                             String oldPicUrlMd = info.getPicUrlMd();
                             String oldPicMd = info.getPicLocalMd();
                             String substring = oldPicMd.substring(oldPicMd.indexOf("(") + 1, oldPicMd.indexOf(")"));

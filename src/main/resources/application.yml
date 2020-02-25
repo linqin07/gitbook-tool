@@ -27,6 +27,10 @@ logging:
     com:
       dao: debug
 
+#sm.sm图床的token
+token: ghBpNYi13XbbnmSi0Ionk4qGBtjxv7f1
+
+
 #默认请求参数
 markdown:
 #  笔记目录

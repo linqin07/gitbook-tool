@@ -16,14 +16,17 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class SMResponse {
 
+    private boolean success;
     private String code;
+    private String message;
     private DataBean data;
+    private String RequestId;
 
-    @Data
     @NoArgsConstructor
-    @AllArgsConstructor
-    @Accessors(chain = true)
+    @Data
     public static class DataBean {
+
+        private int file_id;
         private int width;
         private int height;
         private String filename;
@@ -31,9 +34,9 @@ public class SMResponse {
         private int size;
         private String path;
         private String hash;
-        private int timestamp;
         private String url;
         private String delete;
-
+        private String page;
     }
 }
+

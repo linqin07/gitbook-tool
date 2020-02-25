@@ -9,18 +9,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import lombok.Cleanup;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +60,10 @@ public class DownloadUploadPic {
 
         url = new URL(urlString);
         URLConnection con = url.openConnection();
+        con.addRequestProperty("User-Agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36");
+        con.setReadTimeout(5000);
+        con.setConnectTimeout(5000);
         // 输入流
         is = con.getInputStream();
         // 1K的数据缓冲
@@ -83,10 +85,10 @@ public class DownloadUploadPic {
      * @param path      文件的绝对路径
      * @param errorTime 错误重试次数
      */
-    public static String upload(String path, int errorTime)
+    public static String upload(String path, int errorTime, String token)
             throws InterruptedException, IOException {
-        if (errorTime == 5) {
-            logger.error("[{}]上传失败次数达到上限{}次", path, errorTime);
+        if (errorTime == 0) {
+            logger.error("[{}]上传失败次数达到上限次", path, errorTime);
             return null;
         }
 
@@ -94,27 +96,31 @@ public class DownloadUploadPic {
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("smfile", "i", fileBody)
+                .addFormDataPart("smfile", path.substring(path.lastIndexOf("/") + 1) , fileBody)
                 .build();
 
         Request request = new Request.Builder()
-                .url("https://sm.ms/api/upload")
+                .url("https://sm.ms/api/v2/upload")
+                .header("Authorization", token)
                 .header("User-Agent",
                         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36")
                 .post(requestBody)
                 .build();
 
         Response response = httpClient.newCall(request).execute();
+        ResponseBody body = response.body();
+        String string = new String(body.bytes(), Charset.defaultCharset());
+
         if (response.isSuccessful()) {
-            ResponseBody body = response.body();
             try {
-                SMResponse smResponse = JSON.parseObject(body.string(), SMResponse.class);
+                SMResponse smResponse = JSON.parseObject(string, SMResponse.class);
                 return smResponse.getData().getUrl();
             } catch (Exception e) {
-                logger.error("上传图片[{}]失败 res=[{}]", path, body.string());
-                errorTime++;
+                logger.error("上传图片[{}]失败 res=[{}]", path, string);
+                e.printStackTrace();
+                errorTime--;
                 Thread.sleep(20 * 1000);
-                return upload(path, errorTime);
+                return upload(path, errorTime, token);
             } finally {
                 body.close();
             }
@@ -143,7 +149,7 @@ public class DownloadUploadPic {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String upload = upload("F:\\hexo\\vuepress\\docs\\Markdown入门到放弃\\vuepress搭建博客\\assets\\1562226911308.png", 1);
+        String upload = upload("F:\\hexo\\vuepress\\docs\\Markdown入门到放弃\\vuepress搭建博客\\assets\\1563681083699.png", 1, "ghBpNYi13XbbnmSi0Ionk4qGBtjxv7f1");
         System.out.println(upload);
     }
 }
