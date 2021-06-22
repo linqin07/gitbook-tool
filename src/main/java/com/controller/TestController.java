@@ -29,8 +29,7 @@ public class TestController {
 
     @RequestMapping("/test")
     public String test() {
-        System.out.println(bakPath);
-        System.out.println(path);
+
         return "hello world!";
     }
 

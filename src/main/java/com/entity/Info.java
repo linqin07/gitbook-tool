@@ -40,10 +40,6 @@ public class Info extends Model<Info> {
      */
     private String picLocalPath;
 
-    /**
-     * 本地图片md字符串
-     */
-    private String picLocalMd;
 
     /**
      * 图片外链
@@ -51,9 +47,9 @@ public class Info extends Model<Info> {
     private String picUrl;
 
     /**
-     * 图片外链md字符串
+     * sha
      */
-    private String picUrlMd;
+    private String sha;
 
 
 }

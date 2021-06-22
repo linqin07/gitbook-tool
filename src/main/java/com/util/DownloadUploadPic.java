@@ -3,11 +3,8 @@ package com.util;
 import com.alibaba.fastjson.JSON;
 import com.entity.SMResponse;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -21,6 +18,9 @@ import lombok.Cleanup;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.imageio.ImageIO;
 
 
 /**
@@ -46,7 +46,7 @@ public class DownloadUploadPic {
 
     public static void download(String urlString, String fileName) throws IOException {
         File file = new File(fileName);
-        if (file.exists()) {
+        if (file.exists() && picIsValid(fileName)) {
             logger.info("[{}]已下载完毕", fileName);
             return;
         } else {
@@ -62,8 +62,8 @@ public class DownloadUploadPic {
         URLConnection con = url.openConnection();
         con.addRequestProperty("User-Agent",
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36");
-        con.setReadTimeout(5000);
-        con.setConnectTimeout(5000);
+        con.setReadTimeout(50000);
+        con.setConnectTimeout(50000);
         // 输入流
         is = con.getInputStream();
         // 1K的数据缓冲
@@ -77,6 +77,7 @@ public class DownloadUploadPic {
             os.write(bs, 0, len);
         }
 
+        logger.info("\n");
 
     }
 
@@ -96,7 +97,7 @@ public class DownloadUploadPic {
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("smfile", path.substring(path.lastIndexOf("/") + 1) , fileBody)
+                .addFormDataPart("smfile", path.substring(path.lastIndexOf("/") + 1), fileBody)
                 .build();
 
         Request request = new Request.Builder()
@@ -148,9 +149,42 @@ public class DownloadUploadPic {
         return true;
     }
 
+    public static boolean picIsValid(String localStr) {
+        try {
+            InputStream inputStream = null;
+            if (!localStr.contains("http")) {
+                File f = new File(localStr);
+                inputStream = new FileInputStream(f);
+            } else {
+                inputStream = new URL(localStr).openStream();
+            }
+            try {
+                BufferedImage sourceImg = ImageIO.read(inputStream);//判断图片是否损坏
+                int picWidth = sourceImg.getWidth(); //确保图片是正确的（正确的图片可以取得宽度）
+                return true;
+            } catch (Exception e) {
+                //关闭IO流才能操作图片
+                inputStream.close();
+                // e.printStackTrace();
+                return false;
+            } finally {
+                //最后一定要关闭IO流
+                inputStream.close();
+            }
+        } catch (Exception e) {
+            // e.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
-        String upload = upload("F:\\hexo\\vuepress\\docs\\Markdown入门到放弃\\vuepress搭建博客\\assets\\1563681083699.png", 1, "ghBpNYi13XbbnmSi0Ionk4qGBtjxv7f1");
-        System.out.println(upload);
+        // String upload = upload("F:\\hexo\\vuepress\\docs\\Markdown入门到放弃\\vuepress搭建博客\\assets\\1563681083699.png", 1, "ghBpNYi13XbbnmSi0Ionk4qGBtjxv7f1");
+        // System.out.println(upload);
+
+        // String url = "F:\\hexo\\vuepress\\docs\\.vuepress\\picBak\\image-20210319180100026.png";
+        String url = "F:\\hexo\\vuepress\\docs\\.vuepress\\picBak\\mul_thread.gif";
+        System.out.println(picIsValid(url));
+        // download();
     }
 }
 

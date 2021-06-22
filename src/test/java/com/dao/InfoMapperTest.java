@@ -38,12 +38,14 @@ public class InfoMapperTest {
 
     @Test
     public void test() {
-        // 打桩
+        // 打桩,与参数无关。
         Info info = new Info();
-        info.setPicUrlMd("picUrlMd").setPicUrl("picUrl").setPicLocalMd("picLocalMd").setPicLocalPath("picLocalPath")
-            .setPicName("picName").setId(0L);
-        Mockito.when(infoMapper.selectByPicLocalMd("picLocalMd")).thenReturn(info);
-        Info info1 = infoMapper.selectByPicLocalMd("picLocalMd");
+        info.setPicUrl("picUrl")
+            .setPicLocalPath("picLocalPath")
+            .setPicName("picName")
+            .setId(0L);
+        Mockito.when(infoMapper.selectByPicUrl("pic")).thenReturn(info);
+        Info info1 = infoMapper.selectByPicUrl("pic1ddd");
         System.out.println(info.toString());
 
     }

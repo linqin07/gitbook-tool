@@ -78,8 +78,23 @@ public class FileUtil {
         return list;
     }
 
+    public static boolean isAbsolutelyPath(String url) {
+        try {
+            File file = new File(url);
+            if (file.exists()) {
+                return true;
+            } else return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        List<String> content = readFileContent(new File("F:\\GitBook\\Linux\\防火墙\\防火墙.md"));
-        System.out.println(content.toString());
+        // List<String> content = readFileContent(new File("F:\\GitBook\\Linux\\防火墙\\防火墙.md"));
+        // System.out.println(content.toString());
+
+        System.out.println(isAbsolutelyPath("F:\\hexo\\pic\\README.md"));
+
     }
 }

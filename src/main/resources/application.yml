@@ -24,17 +24,39 @@ mybatis:
   type-aliases-package: com.entity
 logging:
   level:
-    com:
-      dao: debug
+    com: debug
 
-#sm.sm图床的token
-token: ghBpNYi13XbbnmSi0Ionk4qGBtjxv7f1
+
 
 
 #默认请求参数
 markdown:
 #  笔记目录
-  path: F:\hexo\vuepress\docs
+  path: F:/hexo/vuepress/docs
 #  图片备份目录
-  bak-path: F:\hexo\vuepress\docs\.vuepress\picBak
+  bak-path: F:/hexo/vuepress/docs/.vuepress/picBak
+  # 本地图片
+  local-path: F:/hexo/vuepress/docs/assets
+  # 逗号分割,加上会强制替换为对应的url，可能也无法查看
+  exclude-list:
+
+
+#推送到gitee
+gitee:
+  access_token: 8a5b58cd187031a2d5816ba3e82d7e92
+  owner: linqin07
+  repo: pic
+  ref: master
+
+
+# 支持的匹配规则
+rule:
+  upload:
+    - \s*!\[.*\]\(assets\/.*\.(png|gif)\)$
+    - \s*!\[.*\]\([^http|^assets].*\)$
+    - \s*^<img src=.*>$
+  check-replace: true
+  http-upload: false
+
+
 
