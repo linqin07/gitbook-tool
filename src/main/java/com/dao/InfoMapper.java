@@ -25,6 +25,9 @@ public interface InfoMapper extends BaseMapper<Info> {
     @Select("SELECT * FROM info WHERE pic_local__path = #{picLocalPath}")
     Info selectByPicLocal(String picLocalPath);
 
+    @Select("SELECT * FROM info WHERE pic_local_path =#{path} OR pic_url=#{path}")
+    Info selectByLocalOrPicUrl(String path);
+
     @Insert("INSERT INTO info(pic_name, pic_local_path, pic_url, `sha`) " +
             "VALUES (#{info.picName}, #{info.picLocalPath}, #{info.picUrl}, #{info.sha}) " +
             "ON DUPLICATE KEY UPDATE pic_local_path= #{info.picLocalPath}, pic_url=#{info.picUrl}, `sha`=#{info.sha}")

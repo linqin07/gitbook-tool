@@ -49,18 +49,19 @@ public class BaseServiceImpl implements BaseService {
 
     /**
      * 匹配： ![下载地址](https://i.loli.net/2019/07/30/5d400294d103e20393.jpg)
+     * 同时也匹配： ![mul_thread.gif](../../assets/mul_thread.gif)
      */
-    final static String regex1 = "\\s*!\\[.*\\]\\(https:\\/\\/.*?\\)$";
+    final static String regex1 = "\\s*!\\[.*\\]\\(.*?\\)$";
 
     private final static Pattern PATTERN1;
-    static {
-        PATTERN1 = Pattern.compile(regex1, Pattern.MULTILINE);
-    }
-
     /**
      * 匹配括号内的字符串或则src后面的路径
      */
     private final static Pattern ALL = Pattern.compile("(?<=src=\\\").*?(?=\\\")|(?<=\\().*?(?=\\))");
+
+    static {
+        PATTERN1 = Pattern.compile(regex1, Pattern.MULTILINE);
+    }
 
     @Autowired
     private InfoMapper infoMapper;
@@ -88,9 +89,10 @@ public class BaseServiceImpl implements BaseService {
     public void init() {
         List<String> upload = ruleConfig.getUpload();
         List<Pattern> uploadPatterns = upload.stream().map(item -> Pattern.compile(item, Pattern.MULTILINE))
-                                      .collect(Collectors.toList());
+                                             .collect(Collectors.toList());
         map.put("upload", uploadPatterns);
     }
+
     /**
      * 备份md文件的图片
      *
@@ -113,14 +115,24 @@ public class BaseServiceImpl implements BaseService {
             }).forEach(downUploadUrl -> {
                 // 下载图片
                 try {
-                    Info info = infoMapper.selectByPicUrl(downUploadUrl);
+                    Info info = infoMapper.selectByLocalOrPicUrl(downUploadUrl);
                     if (info != null) {
                         String localUrl = bakPath + File.separator + info.getPicName();
-                        log.info("下载链接: {}", downUploadUrl);
-                        DownloadUploadPic.download(downUploadUrl, localUrl);
+                        if (downUploadUrl.contains("https")) {
+                            log.info("下载链接: {}", downUploadUrl);
+                            DownloadUploadPic.download(downUploadUrl, localUrl);
+                        } else {
+                            File b = new File(file1.getParent(), downUploadUrl);
+                            String absolute = b.getCanonicalPath();
+
+                            Files.copy(Paths.get(absolute), Paths.get(localUrl), StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    } else {
+                        log.info("file: {}", file1.getAbsolutePath());
                     }
 
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    log.error("下载失败: {}", downUploadUrl);
                     e.printStackTrace();
                 }
 
@@ -160,7 +172,7 @@ public class BaseServiceImpl implements BaseService {
                     }
                     // 拼接路径
                     int i = item.indexOf("(");
-                    String path = item.substring(i+1, item.length() - 1);
+                    String path = item.substring(i + 1, item.length() - 1);
                     path = fileName.getParent() + File.separator + path;
                     return path;
                 }).collect(Collectors.toList());
@@ -184,7 +196,8 @@ public class BaseServiceImpl implements BaseService {
                     // 替换原来的图片路径
                     byte[] bytes = Files.readAllBytes(new File(s).toPath());
                     UploadRequest uploadRequest = new UploadRequest(giteeConfig.getAccessToken(),
-                            Base64.getEncoder().encodeToString(bytes), picName, "auto commit", fileName.getAbsolutePath());
+                            Base64.getEncoder().encodeToString(bytes), picName, "auto commit", fileName
+                            .getAbsolutePath());
                     UploadResponse response = api.upload(uploadRequest);
                     // UploadResponse response = null;
                     if (response == null) {
@@ -385,7 +398,7 @@ public class BaseServiceImpl implements BaseService {
         return list;
     }
 
-    public  boolean picIsValid(String localStr, List<String> excludedList) {
+    public boolean picIsValid(String localStr, List<String> excludedList) {
         try {
             InputStream inputStream = null;
             if (!localStr.contains("http")) {
@@ -422,32 +435,33 @@ public class BaseServiceImpl implements BaseService {
 
     /**
      * 获得targetPath相对于sourcePath的相对路径
-     * @param sourcePath	: 原文件路径
-     * @param targetPath	: 目标文件路径
+     *
+     * @param sourcePath : 原文件路径
+     * @param targetPath : 目标文件路径
      * @return
      */
     private String getRelativePath(String sourcePath, String targetPath) {
         StringBuffer pathSB = new StringBuffer();
 
-        if (targetPath.indexOf(sourcePath) == 0){
+        if (targetPath.indexOf(sourcePath) == 0) {
             pathSB.append(targetPath.replace(sourcePath, ""));
-        }else {
+        } else {
             String[] sourcePathArray = sourcePath.split("/");
             String[] targetPathArray = targetPath.split("/");
             // if (targetPathArray.length >= sourcePathArray.length){
-                for (int i = 0; i < targetPathArray.length; i++){
-                    if (sourcePathArray.length > i && targetPathArray[i].equals(sourcePathArray[i])){
-                        continue;
-                    }else {
-                        for (int j = i; j < sourcePathArray.length; j++){
-                            pathSB.append("../");
-                        }
-                        for (;i < targetPathArray.length; i++){
-                            pathSB.append(targetPathArray[i] + "/");
-                        }
-                        break;
+            for (int i = 0; i < targetPathArray.length; i++) {
+                if (sourcePathArray.length > i && targetPathArray[i].equals(sourcePathArray[i])) {
+                    continue;
+                } else {
+                    for (int j = i; j < sourcePathArray.length; j++) {
+                        pathSB.append("../");
                     }
+                    for (; i < targetPathArray.length; i++) {
+                        pathSB.append(targetPathArray[i] + "/");
+                    }
+                    break;
                 }
+            }
             // }else {
             //     for (int i = 0; i < sourcePathArray.length; i++){
             //         if (targetPathArray.length > i && targetPathArray[i].equals(sourcePathArray[i])){

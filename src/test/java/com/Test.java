@@ -2,6 +2,8 @@ package com;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @Description:
@@ -14,12 +16,14 @@ public class Test {
         // byte[] bytes = Files.readAllBytes(file.toPath());
         // System.out.println("data:image/png;base64," + Base64.getEncoder().encodeToString(bytes));
 
-        // Files.copy(Paths.get("F:\\hexo\\vuepress\\docs\\README.md"), Paths.get("F:\\hexo\\vuepress\\docs\\README1.md"), StandardCopyOption.REPLACE_EXISTING);
+        // 相对路径的复制，每次要setProperty
+        // File fileName = new File("F:\\hexo\\vuepress\\docs\\assets\\mul_thread.gif");
+        // System.out.println(getRelativePath("F:/hexo/vuepress/docs/Java学习/IDEA学习", "F:/hexo/vuepress/docs/assets/mul_thread.gif"));
 
-        File fileName = new File("F:\\hexo\\vuepress\\docs\\assets\\mul_thread.gif");
-
-        System.out
-                .println(getRelativePath("F:/hexo/vuepress/docs/Java学习/IDEA学习", "F:/hexo/vuepress/docs/assets/mul_thread.gif"));
+        File parentFolder = new File("F:\\hexo\\vuepress\\docs\\Java学习\\IDEA学习\\README.md");
+        File b = new File(parentFolder, "../../assets/mul_thread.gif");
+        String absolute = b.getCanonicalPath();
+        System.out.println(absolute);
 
     }
     /**

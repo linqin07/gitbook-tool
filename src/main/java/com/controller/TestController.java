@@ -29,7 +29,7 @@ public class TestController {
 
     @RequestMapping("/test")
     public String test() {
-
+        System.out.println();
         return "hello world!";
     }
 
