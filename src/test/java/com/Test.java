@@ -21,7 +21,7 @@ public class Test {
         // System.out.println(getRelativePath("F:/hexo/vuepress/docs/Java学习/IDEA学习", "F:/hexo/vuepress/docs/assets/mul_thread.gif"));
 
         File parentFolder = new File("F:\\hexo\\vuepress\\docs\\Java学习\\IDEA学习\\README.md");
-        File b = new File(parentFolder, "../../assets/mul_thread.gif");
+        File b = new File(parentFolder.getParent(), "../../assets/mul_thread.gif");
         String absolute = b.getCanonicalPath();
         System.out.println(absolute);
 

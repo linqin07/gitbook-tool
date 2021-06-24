@@ -169,6 +169,9 @@ public class BaseServiceImpl implements BaseService {
                         if (FileUtil.isAbsolutelyPath(url)) {
                             return url;
                         }
+                        if (url.startsWith("assets")) {
+                            return fileName.getParent() + File.separator + url;
+                        }
                     }
                     // 拼接路径
                     int i = item.indexOf("(");
@@ -185,6 +188,9 @@ public class BaseServiceImpl implements BaseService {
             for (String s : obsoleteUrls) {
                 if (!ruleConfig.isHttpUpload()) {
                     if (s.contains("http")) {
+                        continue;
+                    }
+                    if (s.contains("./") || s.contains("../")) {
                         continue;
                     }
                 }

@@ -81,9 +81,14 @@ public class FileUtil {
     public static boolean isAbsolutelyPath(String url) {
         try {
             File file = new File(url);
+            if (file.getPath().startsWith("assets")) {
+                return false;
+            }
             if (file.exists()) {
                 return true;
-            } else return false;
+            }
+
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
