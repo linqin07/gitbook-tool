@@ -37,8 +37,7 @@ markdown:
   bak-path: F:/hexo/vuepress/docs/.vuepress/picBak
   # 本地图片
   local-path: F:/hexo/vuepress/docs/assets
-  # 逗号分割,加上会强制替换为对应的url，可能也无法查看
-  exclude-list:
+
 
 
 #推送到gitee

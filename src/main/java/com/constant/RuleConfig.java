@@ -17,5 +17,6 @@ import java.util.List;
 public class RuleConfig {
     List<String> upload;
     boolean checkReplace;
+    // 已经是http的是否上传
     boolean httpUpload;
 }

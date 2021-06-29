@@ -9,6 +9,7 @@ import com.entity.gitee.UploadResponse;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.service.API;
 import com.service.BaseService;
 import com.util.DownloadUploadPic;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
@@ -32,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -72,9 +75,6 @@ public class BaseServiceImpl implements BaseService {
     @Autowired
     private GiteeConfig giteeConfig;
 
-    @Value("#{'${markdown.exclude-list}'.split(',')}")
-    private List<String> excludedList;
-
     @Value("${markdown.local-path}")
     private String localPath;
 
@@ -94,7 +94,7 @@ public class BaseServiceImpl implements BaseService {
     }
 
     /**
-     * 备份md文件的图片
+     * 备份md文件的图片,只备份upload后的
      *
      * @param markDownFilePath 笔记目录
      * @param bakPath          备份图片保存的路径
@@ -190,9 +190,10 @@ public class BaseServiceImpl implements BaseService {
                     if (s.contains("http")) {
                         continue;
                     }
-                    if (s.contains("./") || s.contains("../")) {
-                        continue;
-                    }
+                    // 相对路径不上传
+                    // if (s.contains("./") || s.contains("../")) {
+                    //     continue;
+                    // }
                 }
                 try {
                     // 获取文件名, 取最大的
@@ -224,12 +225,12 @@ public class BaseServiceImpl implements BaseService {
                     }
                     info.setPicLocalPath(relativePath);
 
-                    if (picIsValid(download_url, excludedList)) {
+                    if (picIsValid(download_url)) {
                         info.setSha(response.getContent().getSha());
                         String format = String.format(md, picName, download_url);
                         list.add(format);
                     } else {
-                        log.debug("图片无效: path: {}, url: {}", s, download_url);
+                        log.debug("http图片无效: path: {}, url: {}", s, download_url);
                         String format = String.format(md, picName, relativePath);
                         list.add(format);
                     }
@@ -290,28 +291,10 @@ public class BaseServiceImpl implements BaseService {
                 boolean picIsValid = DownloadUploadPic.picIsValid(picHttpUrl);
                 // log.info("地址：{} {}", picHttpUrl, valid);
                 if (!picIsValid) {
-                    log.info("失效文件：{}, url: {}", item, url);
-
+                    log.info("失效文件：{}, url: {}", item.getPath(), url);
                 }
             });
-
-            //  md 替换
-            // todo 上传处理
-            if (ruleConfig.isCheckReplace()) {
-                if (!CollectionUtils.isEmpty(checkMap)) {
-                    List<String> collect = content.stream().map(c -> {
-                        if (checkMap.containsKey(c)) {
-                            c = checkMap.get(c);
-                            log.info("替换链接失效图片：{}", checkMap.get(c));
-                        }
-                        return c;
-                    }).collect(Collectors.toList());
-
-                    replaceMd(item, collect);
-                }
-            }
         }
-
     }
 
     @Override
@@ -376,6 +359,28 @@ public class BaseServiceImpl implements BaseService {
         }
     }
 
+    @Override
+    public void removeDeprecatedPic(String path, String bakPath) throws IOException {
+        // 移除废弃的图片，用于编辑过程中截图过多后没有主动删除冗余图片
+        bak(path, bakPath);
+        // 删除比备份后多的图片
+        File file = new File(path + "/assets");
+        File bakFile = new File(bakPath);
+        if (bakFile.isDirectory() && file.isDirectory()) {
+            File[] bakFiles = bakFile.listFiles();
+            File[] files = file.listFiles();
+            Map<String, File> bakFilesMap = Arrays.stream(bakFiles).collect(Collectors.toMap(File::getName, Function.identity()));
+            Map<String, File> filesMap = Arrays.stream(files).collect(Collectors.toMap(File::getName, Function.identity()));
+            Sets.SetView<String> difference = Sets.difference(filesMap.keySet(), bakFilesMap.keySet());
+            difference.forEach(i -> {
+                File deletedFile = filesMap.get(i);
+                log.info("删除文件:{}, {}", i, deletedFile.getPath());
+                deletedFile.delete();
+            });
+
+        }
+    }
+
 
     private void replaceMd(File fileName, List<String> collect) throws IOException {
         String newCcontent = Joiner.on(System.lineSeparator()).join(collect);
@@ -404,7 +409,7 @@ public class BaseServiceImpl implements BaseService {
         return list;
     }
 
-    public boolean picIsValid(String localStr, List<String> excludedList) {
+    public boolean picIsValid(String localStr) {
         try {
             InputStream inputStream = null;
             if (!localStr.contains("http")) {
@@ -424,10 +429,6 @@ public class BaseServiceImpl implements BaseService {
                 int i = localStr.lastIndexOf("/");
                 int j = localStr.lastIndexOf("\\");
                 if (i < j) i = j;
-                if (excludedList.contains(localStr.substring(i + 1))) {
-                    log.info("配置无法识别图片: {}", localStr);
-                    return true;
-                }
                 return false;
             } finally {
                 //最后一定要关闭IO流

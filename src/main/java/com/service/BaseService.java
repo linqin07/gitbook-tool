@@ -22,4 +22,6 @@ public interface BaseService {
     void local(String path) throws IOException;
 
     void httpUrl(String path1) throws IOException;
+
+    void removeDeprecatedPic(String path, String bakPath) throws IOException;
 }
