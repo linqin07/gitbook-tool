@@ -7,11 +7,15 @@ package com.service;
  */
 public class Test {
 
-    public static void main(String[] args) {
-        String picUrl = "![下载地址](https://i.loli.net/2019/06/01/5cf16e87f1c2a16290.jpg)";
-        String replace = picUrl
-                .replace("https://i.loli.net/2019/06/01/5cf16e87f1c2a16290.jpg", "www.baidu.com");
-        System.out.println(replace);
+
+    public static void main(String... args) {
+        xx();
+    }
+
+    // 可变参数不会null，只会lenth=0
+    public static void xx(String... xx) {
+        System.out.println(xx == null);
+        System.out.println(xx.length);
     }
 
 }

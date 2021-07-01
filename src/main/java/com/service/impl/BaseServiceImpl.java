@@ -78,6 +78,9 @@ public class BaseServiceImpl implements BaseService {
     @Value("${markdown.local-path}")
     private String localPath;
 
+    @Value("${markdown.modify-day-not-upload:1}")
+    private int notUpload;
+
     @Getter
     private Map<String, List<Pattern>> map = new HashMap<>();
 
@@ -165,7 +168,7 @@ public class BaseServiceImpl implements BaseService {
                     Matcher matcher = ALL.matcher(item);
                     if (matcher.find()) {
                         String url = matcher.group(0);
-                        // 判断是相对路径还是绝对路径
+                        // 判断绝对路径
                         if (FileUtil.isAbsolutelyPath(url)) {
                             return url;
                         }
@@ -190,10 +193,14 @@ public class BaseServiceImpl implements BaseService {
                     if (s.contains("http")) {
                         continue;
                     }
-                    // 相对路径不上传
-                    // if (s.contains("./") || s.contains("../")) {
-                    //     continue;
-                    // }
+                    // 相对路径不上传,判断
+                    if (s.contains("./") || s.contains("../")) {
+                        File file1 = new File(s);
+                        // 编辑时间大于n天的都不上传浪费资源
+                        if ((System.currentTimeMillis() - file1.lastModified()) / (1000 * 24 * 60 * 60) > notUpload){
+                            continue;
+                        }
+                    }
                 }
                 try {
                     // 获取文件名, 取最大的

@@ -64,6 +64,7 @@ public class TestController {
         baseService.httpUrl(path);
     }
 
+
     @RequestMapping("/removeDeprecatedPic")
     public void removeDeprecatedPic() throws IOException {
         baseService.removeDeprecatedPic(path, bakPath);
