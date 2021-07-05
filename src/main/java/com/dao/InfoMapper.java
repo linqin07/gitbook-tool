@@ -22,7 +22,7 @@ public interface InfoMapper extends BaseMapper<Info> {
     @Select("SELECT * FROM info WHERE pic_url_md = #{picUrlMd}")
     Info selectByPicUrlMd(String picUrlMd);
 
-    @Select("SELECT * FROM info WHERE pic_local__path = #{picLocalPath}")
+    @Select("SELECT * FROM info WHERE pic_local_path = #{picLocalPath}")
     Info selectByPicLocal(String picLocalPath);
 
     @Select("SELECT * FROM info WHERE pic_local_path =#{path} OR pic_url=#{path}")

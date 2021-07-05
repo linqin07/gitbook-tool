@@ -47,9 +47,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class BaseServiceImpl implements BaseService {
-    // <img src="F:\hexo\vuepress\docs\.vuepress\picBak\1554094154356.png" alt="项目结构" style="zoom:67%;" />
-    // \s\<img.*?src\=(\'|\")(.*?)(\'|\")[^>]*>
-
     /**
      * 匹配： ![下载地址](https://i.loli.net/2019/07/30/5d400294d103e20393.jpg)
      * 同时也匹配： ![mul_thread.gif](../../assets/mul_thread.gif)
@@ -319,6 +316,11 @@ public class BaseServiceImpl implements BaseService {
             Map<String, String> replaceMap = urlList.stream().collect(Collectors.toMap(String::toString, item -> {
                 String picHttpUrl = item.substring(item.indexOf("(") + 1, item.length() - 1);
                 Info info = infoMapper.selectByPicUrl(picHttpUrl);
+
+                // 判断图片是否有效，无效的不替换
+                if (info == null) {
+                    return item;
+                }
                 String replace = item.replace(picHttpUrl, info.getPicLocalPath());
                 return replace;
             }));
@@ -349,12 +351,17 @@ public class BaseServiceImpl implements BaseService {
         for (File fileName : markDownFileList) {
             List<String> content = FileUtil.readFileContent(fileName);
             // 获取匹配字符串：![下载地址](F:\GitBook\Markdown入门到放弃\bak\1550052930676.png)
-            List<String> urlModel = FileUtil.matchContent(content, Pattern.compile(""));
+            // List<String> urlModel = FileUtil.matchContent(content, Pattern.compile("\\s*!\\[.*\\]\\(.*?\\)$"));
+            List<String> urlModel = FileUtil.matchContent(content, PATTERN1);
 
             if (CollectionUtils.isEmpty(urlModel)) continue;
             Map<String, String> replaceMap = urlModel.stream().collect(Collectors.toMap(String::toString, item -> {
                 String picLocalPath = item.substring(item.indexOf("(") + 1, item.length() - 1);
                 Info info = infoMapper.selectByPicLocal(picLocalPath);
+                // 判断图片是否有效，无效的不替换
+                if (info == null || !picIsValid(info.getPicUrl())) {
+                    return item;
+                }
                 String replace = item.replace(picLocalPath, info.getPicUrl());
                 return replace;
             }));
