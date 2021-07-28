@@ -111,6 +111,7 @@ public class VuePressUtil {
         // 排序
         List collect = (List) list.stream().sorted((a, b) -> {
             if (a instanceof String[] && b instanceof String[]) {
+                // 子文件排序
                 String[] astr = (String[]) a;
                 String[] bstr = (String[]) b;
                 String[] split1 = astr[1].split("\\.");
@@ -121,8 +122,27 @@ public class VuePressUtil {
                     return Integer.valueOf(s).compareTo(Integer.valueOf(anotherString));
                 }
                 return 1;
+            } else if (a instanceof Sidebar && b instanceof Sidebar) {
+                // 目录排序
+                String[] split1 = ((Sidebar) a).getTitle().split("\\.");
+                String[] split2 = ((Sidebar) b).getTitle().split("\\.");
+                if (split1.length == 2 && split2.length == 2) {
+                    String s = split1[0];
+                    String anotherString = split2[0];
+                    return Integer.valueOf(s).compareTo(Integer.valueOf(anotherString));
+                }
+                return 1;
             } else return 1;
+
         }).collect(Collectors.toList());
+
+        //根据title排序
+        // List collect1 = (List)collect.stream().sorted((a, b) -> {
+        //     Sidebar a1 = (Sidebar) a;
+        //     Sidebar b1 = (Sidebar) b;
+        //     return a1.getTitle().compareTo(b1.getTitle());
+        //
+        // }).collect(Collectors.toList());
         return collect;
     }
 

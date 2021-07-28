@@ -37,7 +37,8 @@ markdown:
   bak-path: F:/hexo/vuepress/docs/.vuepress/picBak
   # 本地图片
   local-path: F:/hexo/vuepress/docs/assets
-  modify-day-not-upload: 2
+  # 多久前编辑的不上传
+  modify-day-not-upload: 28
 
 
 #推送到gitee
