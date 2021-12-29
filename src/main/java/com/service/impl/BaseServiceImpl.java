@@ -78,6 +78,9 @@ public class BaseServiceImpl implements BaseService {
     @Value("${markdown.modify-day-not-upload:1}")
     private int notUpload;
 
+    @Value("${markdown.dataBaseBak:false}")
+    private boolean dataBaseBak;
+
     @Getter
     private Map<String, List<Pattern>> map = new HashMap<>();
 
@@ -129,6 +132,15 @@ public class BaseServiceImpl implements BaseService {
                         }
                     } else {
                         log.info("file: {}", file1.getAbsolutePath());
+                        if (dataBaseBak) {
+                            Info info1 = new Info();
+                            info1.setPicUrl(downUploadUrl);
+                            String fileName = getFileName(downUploadUrl);
+                            info1.setPicName(fileName);
+                            String localUrl = bakPath + File.separator + fileName;
+                            info1.setPicLocalPath(localUrl);
+                            infoMapper.insert(info1);
+                        }
                     }
 
                 } catch (Exception e) {

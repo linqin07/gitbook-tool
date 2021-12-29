@@ -1,11 +1,11 @@
 server:
-  port: 8888
+  port: 8080
 # DataSource Config
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mybatis-plus?serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/vuepress?serverTimezone=GMT%2B8
     username: root
     password: root
     hikari:
@@ -39,6 +39,8 @@ markdown:
   local-path: F:/hexo/vuepress/docs/assets
   # 多久前编辑的不上传
   modify-day-not-upload: 28
+  # 清空数据库后开启恢复，执行 /bak
+  dataBaseBak: true
 
 
 #推送到gitee
