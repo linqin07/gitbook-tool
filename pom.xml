@@ -115,6 +115,7 @@
     <build>
         <!-- 指定打包的名字 -->
         <finalName>${project.artifactId}</finalName>
+
         <!--Maven会从项目的src/main/resources目录下查找资源，加载配置，不能随便改，-->
         <resources>
             <!--把配置文件放在jar包外面的config文件夹，方便修改-->
