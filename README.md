@@ -12,15 +12,27 @@
 
 - 检测外链地址是否过期  http://localhost:8888/check
 - 自动上传非外链地址图片到图床中  http://localhost:8888/upload
-- 备份笔记目录中的外链地址图片到指定文件夹  http://localhost:8888/bak
-- 统一使用本地图片进行展示  http://localhost:8888/local
-- 统一使用外链地址进行展示  http://localhost:8888/httpUrl
+- `备份笔记目录中的外链地址图片到指定文件夹`  http://localhost:8888/bak
+- `统一使用本地图片进行展示`  http://localhost:8888/local
+- `统一使用外链地址进行展示`  http://localhost:8888/httpUrl
 
 额外功能：提供生成 vuepress 博客目录的工具类，一键生成目录。
 
 
 
 使用的图床为 https://sm.ms/ 免费图床。有可能会更新版本替换 API 注意更新项目。
+
+### 2022.04-27
+
+弃用smsm图床，感觉不靠谱，图片会失效。
+
+购买了阿里云oss图床，10元1年。也可以使用github作为图床。不建议使用gitee，有防盗链（代码里面实现过，不是gitee域名看不了图片）。
+
+上传图片使用pic-go，支持多种图床。很方便。本工具剩下的有用功能如下。
+
+- 备份图片，记录本地地址和图床地址
+- 检测图床地址是否失效
+- 替换 md 文件的本地地址或者图床地址
 
 ### 实现思路
 
@@ -49,19 +61,17 @@
 ## 初始化SQL 语句
 
 ```sql
-CREATE DATABASE 
-USE `mybatis-plus`;
+/*!40101 SET NAMES utf8 */;
+CREATE DATABASE vuepress;
+use vuepress;
 
-DROP TABLE IF EXISTS `info`;
+create table `info` (
+	`id` bigint (20),
+	`pic_name` varchar (1536),
+	`pic_local_path` varchar (1536),
+	`pic_url` varchar (1536),
+	`sha` varchar (1536)
+); 
 
-CREATE TABLE `info` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT ‘id’,
-  `pic_name` varchar(128) DEFAULT NULL COMMENT ‘图片名名称’,
-  `pic_local_path` varchar(128) DEFAULT NULL COMMENT ‘本地图片地址’,
-  `pic_local_md` varchar(256) DEFAULT NULL COMMENT ‘本地图片md字符串’,
-  `pic_url` varchar(128) DEFAULT NULL COMMENT ‘图片外链’,
-  `pic_url_md` varchar(256) DEFAULT NULL COMMENT ‘图片外链md字符串’,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 ```
 
