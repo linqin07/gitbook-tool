@@ -7,7 +7,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/vuepress?serverTimezone=GMT%2B8
     username: root
-    password: root
+    password: 123456
     hikari:
       connection-timeout: 30000
       auto-commit: true
@@ -32,11 +32,11 @@ logging:
 #默认请求参数
 markdown:
 #  笔记目录
-  path: F:/hexo/vuepress/docs
+  path: D:/linqin/vuepress-blog/docs
 #  图片备份目录
-  bak-path: F:/hexo/vuepress/docs/.vuepress/picBak
+  bak-path: ${markdown.path}/.vuepress/picBak
   # 本地图片
-  local-path: F:/hexo/vuepress/docs/assets
+  local-path: ${markdown.path}/assets
   # 多久前编辑的不上传
   modify-day-not-upload: 28
   # 清空数据库后开启恢复，执行 /bak
@@ -59,6 +59,10 @@ rule:
     - \s*^<img src=.*>$
   check-replace: true
   http-upload: false
+#  不处理的白名单
+  white-list:
+    - https://app.travis-ci.com/linqin07/vuepress-blog.svg?branch=master
+
 
 
 

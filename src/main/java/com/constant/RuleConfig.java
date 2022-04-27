@@ -19,4 +19,6 @@ public class RuleConfig {
     boolean checkReplace;
     // 已经是http的是否上传
     boolean httpUpload;
+
+    List<String> whiteList;
 }

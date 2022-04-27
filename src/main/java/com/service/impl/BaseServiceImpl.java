@@ -118,10 +118,14 @@ public class BaseServiceImpl implements BaseService {
             }).forEach(downUploadUrl -> {
                 // 下载图片
                 try {
+                    if (isWhiteList(downUploadUrl)) {
+                        return;
+                    }
                     Info info = infoMapper.selectByLocalOrPicUrl(downUploadUrl);
                     if (info != null) {
                         String localUrl = bakPath + File.separator + info.getPicName();
                         if (downUploadUrl.contains("https")) {
+
                             log.info("下载链接: {}", downUploadUrl);
                             DownloadUploadPic.download(downUploadUrl, localUrl);
                         } else {
@@ -511,5 +515,24 @@ public class BaseServiceImpl implements BaseService {
         }
         return pathSB.toString();
     }
+
+    /**
+     * 判断白名单列表是否存在匹配的url字符
+     * @param urlString
+     * @return
+     */
+    public boolean isWhiteList(String urlString) {
+        List<String> whiteList = ruleConfig.getWhiteList();
+        if (CollectionUtils.isEmpty(whiteList)) return true;
+
+        for (String whiteListItem : whiteList) {
+            if (urlString.trim().startsWith(whiteListItem.trim())) {
+                log.info("白名单列表匹配通过！不处理该url: {}", urlString);
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
