@@ -65,6 +65,10 @@ public class TestController {
     }
 
 
+    /**
+     * 移除废弃的图片，用于编辑过程中截图过多后没有主动删除冗余图片,针对的是编辑的本地对象
+     * @throws IOException
+     */
     @RequestMapping("/removeDeprecatedPic")
     public void removeDeprecatedPic() throws IOException {
         baseService.removeDeprecatedPic(path, bakPath);
