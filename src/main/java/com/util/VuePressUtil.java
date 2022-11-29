@@ -39,7 +39,7 @@ public class VuePressUtil {
     public static void main(String[] args) throws IOException {
 
         String path = "F:\\hexo\\vuepress\\docs";
-        if (args.length > 0 && !StringUtils.hasText(args[0])) {
+        if (args.length > 0 && StringUtils.hasText(args[0])) {
             path = args[0];
             log.info("目标:{}",path);
         }
